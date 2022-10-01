@@ -1,7 +1,7 @@
 #!/bin/bash
 
 clusters="adanalytics b2b bonificacao chatbothubi cupom-omni hubparceiros mdm pricing vaivia viastore"
-host="10.244.89.3"
+host="10.114.8.145"
 env="prd"
 
 echo -e "\n### Procurando o host $host nos clusters de $env ###\n"
