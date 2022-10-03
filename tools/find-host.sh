@@ -1,12 +1,11 @@
 #!/bin/bash
 
-clusters="adanalytics b2b bonificacao chatbothubi cupom-omni hubparceiros mdm pricing vaivia viastore"
+clusters=$(kubectx | cat)
 host="10.114.8.145"
-env="prd"
 
-echo -e "\n### Procurando o host $host nos clusters de $env ###\n"
+echo -e "\n### Procurando o host $host ###\n"
 for cluster in $clusters; do
-    kubectx akspriv-$cluster-$env-admin >> /dev/null
-    echo -e "\nCluster: akspriv-$cluster-$env"
+    kubectx $cluster >> /dev/null
+    echo -e "\nCluster: $cluster"
     kubectl get ingress -A | grep $host
 done
