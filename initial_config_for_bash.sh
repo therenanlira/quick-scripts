@@ -2,6 +2,7 @@
 
 OS=$(uname -s)
 DISTRO=$(test -f /etc/os-release && grep "ID_LIKE" /etc/os-release | awk -F= '{ print $2 }')
+INSTALL="brew install"
 
 function install_homebrew() {
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -9,12 +10,8 @@ function install_homebrew() {
 }
 
 function install_node() {
-    brew install node
-    brew install npm
-}
-
-function install_git() {
-    $1 install git
+    $INSTALL node
+    $INSTALL npm
 }
 
 ## Configure bash and set as default
@@ -25,7 +22,7 @@ fi
 
 ## Configure bashrc / bash_profile
 mkdir ~/github &>/dev/null
-PROFILE=$(find ~/github/ -name "*bash_profile*" | awk '(NR==1)')
+PROFILE=$(find ~/github/ -name "*bash_profile*" | awk '{ print $NF }')
 if [ -f $PROFILE ]; then
     if [ ! -e "$HOME/.bash_profile" ]; then
         ln -s $PROFILE ~/.bash_profile
@@ -52,7 +49,7 @@ case $yn in
             install_homebrew
         elif [[ $OS == "Darwin" ]]; then
             install_homebrew
-            brew install git
+            $INSTALL git
         fi;;
     [Nn]* ) exit;;
 esac
@@ -81,13 +78,13 @@ fi
 ## Basic and useless
 read -p "Install neofetch? [y/N] " yn
 case $yn in
-    [Yy] ) brew install neofetch;;
+    [Yy] ) $INSTALL neofetch;;
     [Nn]* ) ;;
 esac
 
 read -p "Install figlet? [y/N] " yn
 case $yn in
-    [Yy] ) brew install figlet;;
+    [Yy] ) $INSTALL figlet;;
     [Nn]* ) ;;
 esac
 
@@ -95,7 +92,7 @@ esac
 read -p "Install vim? [y/N] " yn
 case $yn in
     [Yy] )
-        brew install vim
+        $INSTALL vim
         if [ -f $HOME/.vimrc ]; then
             rm ~/.vimrc.old &>/dev/null
             mv ~/.vimrc ~/.vimrc.old &>/dev/null
@@ -106,58 +103,60 @@ esac
 
 read -p "Install awk? [y/N] " yn
 case $yn in
-    [Yy] ) brew install awk;;
+    [Yy] ) $INSTALL awk;;
     [Nn]* ) ;;
 esac
 
 read -p "Install jq? [y/N] " yn
 case $yn in
-    [Yy] ) brew install jq;;
+    [Yy] ) $INSTALL jq;;
     [Nn]* ) ;;
 esac
 
 read -p "Install tldr? [y/N] " yn
 case $yn in
-    [Yy] ) npm install -g tldr;;
+    [Yy] ) 
+        install_node
+        npm install -g tldr;;
     [Nn]* ) ;;
 esac
 
 ## Packages and network
 read -p "Install watch? [y/N] " yn
 case $yn in
-    [Yy] ) brew install watch;;
+    [Yy] ) $INSTALL watch;;
     [Nn]* ) ;;
 esac
 
 read -p "Install whois? [y/N] " yn
 case $yn in
-    [Yy] ) brew install whois;;
+    [Yy] ) $INSTALL whois;;
     [Nn]* ) ;;
 esac
 
 read -p "Install nmap? [y/N] " yn
 case $yn in
-    [Yy] ) brew install nmap;;
+    [Yy] ) $INSTALL nmap;;
     [Nn]* ) ;;
 esac
 
 ## ISO manipulation
 read -p "Install BalenaEtcher? [y/N] " yn
 case $yn in
-    [Yy] ) brew install --cask balenaetcher;;
+    [Yy] ) $INSTALL --cask balenaetcher;;
     [Nn]* ) ;;
 esac
 
 ## Browsers
 read -p "Install Firefox? [y/N] " yn
 case $yn in
-    [Yy] ) brew install --cask firefox;;
+    [Yy] ) $INSTALL --cask firefox;;
     [Nn]* ) ;;
 esac
 
 read -p "Install Microsoft Edge? [y/N] " yn
 case $yn in
-    [Yy] ) brew install --cask microsoft-edge;;
+    [Yy] ) $INSTALL --cask microsoft-edge;;
     [Nn]* ) ;;
 esac
 
@@ -187,67 +186,90 @@ esac
 read -p "Install Python3? [y/N] " yn
 case $yn in
     [Yy] ) 
-        brew install python3
-        brew install pipx;;
+        $INSTALL python3
+        $INSTALL pipx;;
+    [Nn]* ) ;;
+esac
+
+read -p "Install Go? [y/N] " yn
+case $yn in
+    [Yy] ) $INSTALL go;;
     [Nn]* ) ;;
 esac
 
 read -p "Install Docker? [y/N] " yn
 case $yn in
-    [Yy] ) brew install --cask docker;;
+    [Yy] ) $INSTALL --cask docker;;
     [Nn]* ) ;;
 esac
 
 read -p "Install VSCode? [y/N] " yn
 case $yn in
-    [Yy] ) brew install --cask visual-studio-code;;
+    [Yy] ) $INSTALL --cask visual-studio-code;;
+    [Nn]* ) ;;
+esac
+
+read -p "Install Postman? [y/N] " yn
+case $yn in
+    [Yy] ) $INSTALL postman;;
     [Nn]* ) ;;
 esac
 
 if [[ $OS == "Linux" || $DISTRO != "rhel" ]]; then
     read -p "Install TablePlus? [y/N] " yn
     case $yn in
-        [Yy] ) brew install --cask tableplus;;
+        [Yy] ) $INSTALL --cask tableplus;;
         [Nn]* ) ;;
     esac
 fi
 
 read -p "Install Azure CLI? [y/N] " yn
 case $yn in
-    [Yy] ) brew install azure-cli;;
+    [Yy] ) pipx install azure-cli==2.40.0;;
     [Nn]* ) ;;
 esac
 
 read -p "Install Kubernetes tools? [y/N] " yn
 case $yn in
     [Yy] )
-        brew install kubectl; brew install kubectx
-        brew install fzf ## kubectx and kubens with interactive mode
-        brew install kubecm
-        brew install k9s
-        brew install kubecfg; brew install bash-completion
+        $INSTALL kubectl; $INSTALL kubectx
+        $INSTALL fzf ## kubectx and kubens with interactive mode
+        $INSTALL k9s
+        $INSTALL bash-completion
         kubectl completion bash > $(brew --prefix)/etc/bash_completion.d/kubectl
-        brew install helm; brew tap robscott/tap; brew install robscott/tap/kube-capacity
-        brew tap oleewere/repo; brew install cmctl; brew install cfssl;;
+        $INSTALL helmbrew tap robscott/tap; $INSTALL robscott/tap/kube-capacity
+        (
+            set -x; cd "$(mktemp -d)" &&
+            OS="$(uname | tr '[:upper:]' '[:lower:]')" &&
+            ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" &&
+            KREW="krew-${OS}_${ARCH}" &&
+            curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" &&
+            tar zxvf "${KREW}.tar.gz" &&
+            ./"${KREW}" install krew
+        )
+        kubectl krew install neat
+        brew tap oleewere/repo; $INSTALL cmctl; $INSTALL cfssl;;
     [Nn]* ) ;;
 esac
 
 read -p "Install Openshift tools? [y/N] " yn
 case $yn in
-    [Yy] ) brew install openshift-cli;;
+    [Yy] ) 
+        $INSTALL openshift-cli
+        oc completion bash > $(brew --prefix)/etc/bash_completion.d/oc_bash_completion;;
     [Nn]* ) ;;
 esac
 
 read -p "Install Lens Spaces? [y/N] " yn
 case $yn in
-    [Yy] ) brew install --cask lens;;
+    [Yy] ) $INSTALL --cask lens;;
     [Nn]* ) ;;
 esac
 
 ## Virtualization
 read -p "Install Multipass? [y/N] " yn
 case $yn in
-    [Yy] ) brew install multipass;;
+    [Yy] ) $INSTALL multipass;;
     [Nn]* ) ;;
 esac
 
@@ -263,8 +285,8 @@ if [ $OS == "Darwin" ]; then
             sudo mkdir /usr/local/opt &>/dev/null
             sudo ln -s /opt/homebrew/Cellar/openssl\@1.0/1.0.2u /usr/local/opt/openssl
             brew tap sidneys/homebrew
-            brew install aria2 cabextract wimlib cdrtools sidneys/homebrew/chntpw
-            brew install utm;;
+            $INSTALL aria2 cabextract wimlib cdrtools sidneys/homebrew/chntpw
+            $INSTALL utm;;
         [Nn]* ) ;;
     esac
 fi
@@ -272,12 +294,12 @@ fi
 ## Gaming
 read -p "Install Discord? [y/N] " yn
 case $yn in
-    [Yy] ) brew install discord;;
+    [Yy] ) $INSTALL discord;;
     [Nn]* ) ;;
 esac
 
 read -p "Install Steam? [y/N] " yn
 case $yn in
-    [Yy] ) brew install --cask steam;;
+    [Yy] ) $INSTALL --cask steam;;
     [Nn]* ) ;;
 esac
