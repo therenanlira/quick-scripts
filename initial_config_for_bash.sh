@@ -101,6 +101,12 @@ case $yn in
     [Nn]* ) ;;
 esac
 
+read -p "Install ed? [y/N] " yn
+case $yn in
+    [Yy] ) $INSTALL ed;;
+    [Nn]* ) ;;
+esac
+
 read -p "Install awk? [y/N] " yn
 case $yn in
     [Yy] ) $INSTALL awk;;
